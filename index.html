@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RoadGuard AI - Road Damage Detection</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 16px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            text-align: center;
+            padding: 10px 10px 25px;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 17px;
+        }
+
+        /* =========================
+           HEADINGS
+        ========================= */
+
+        .dashboard-title,
+        .section-title {
+            text-align: center;
+        }
+
+        .dashboard-title {
+            margin-top: 5px;
+        }
+
+        /* =========================
+           DASHBOARD CARDS
+        ========================= */
+
+        .summary {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin:
+                25px 0 40px;
+        }
+
+        .card {
+            background: #f1f5f9;
+
+            padding: 25px 15px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            border:
+                1px solid #e5e7eb;
+        }
+
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .label {
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        /* =========================
+           UPLOAD SECTION
+        ========================= */
+
+        .upload-box {
+            margin: 25px 0;
+
+            padding: 40px;
+
+            border:
+                2px dashed #9ca3af;
+
+            border-radius: 14px;
+
+            text-align: center;
+
+            background: #fafafa;
+        }
+
+        .file-input {
+            max-width: 100%;
+            font-size: 15px;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        button,
+        .report-button {
+
+            background: #111827;
+
+            color: white;
+
+            padding:
+                13px 28px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            margin-top: 18px;
+
+            text-decoration: none;
+
+            display: inline-block;
+        }
+
+        button:hover,
+        .report-button:hover {
+            opacity: 0.85;
+        }
+
+        /* =========================
+           RESULT IMAGE
+        ========================= */
+
+        .result-image {
+
+            display: block;
+
+            max-width: 800px;
+
+            width: 100%;
+
+            margin: 20px auto;
+
+            border-radius: 12px;
+
+            border:
+                1px solid #e5e7eb;
+        }
+
+        /* =========================
+           SEVERITY
+        ========================= */
+
+        .severity {
+
+            text-align: center;
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            margin: 20px;
+        }
+
+        /* =========================
+           DETECTION BOX
+        ========================= */
+
+        .detection {
+
+            margin:
+                12px auto;
+
+            padding: 15px;
+
+            background: #f1f5f9;
+
+            border-radius: 8px;
+
+            max-width: 600px;
+
+            text-align: center;
+        }
+
+        /* =========================
+           PDF REPORT
+        ========================= */
+
+        .report-area {
+
+            text-align: center;
+
+            margin:
+                30px 0 10px;
+        }
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        .history-section {
+
+            max-width: 1150px;
+
+            margin:
+                35px auto;
+
+            padding:
+                0 20px;
+        }
+
+        .history-table {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+            margin-top: 20px;
+
+            background: white;
+        }
+
+        .history-table th,
+        .history-table td {
+
+            padding: 13px;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            text-align: center;
+        }
+
+        .history-table th {
+
+            background: #111827;
+
+            color: white;
+        }
+
+        .history-table tr:hover {
+
+            background:
+                #f8fafc;
+        }
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error {
+
+            color: #dc2626;
+
+            text-align: center;
+
+            font-weight: bold;
+
+            margin: 20px 0;
+        }
+
+        /* =========================
+           NO DATA
+        ========================= */
+
+        .no-data {
+
+            text-align: center;
+
+            color: #6b7280;
+
+            padding: 20px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+
+            text-align: center;
+
+            color: #6b7280;
+
+            padding: 25px;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           TABLET
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .summary {
+
+                grid-template-columns:
+                    1fr 1fr;
+            }
+
+            .navbar {
+
+                padding: 15px;
+            }
+
+            .nav-links a {
+
+                margin-left: 10px;
+            }
+
+            .container {
+
+                margin: 15px;
+
+                padding: 20px;
+            }
+
+            .hero h1 {
+
+                font-size: 28px;
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 500px) {
+
+            .summary {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .navbar {
+
+                flex-direction: column;
+
+                gap: 12px;
+            }
+
+            .nav-links a {
+
+                margin:
+                    0 7px;
+            }
+
+            .upload-box {
+
+                padding:
+                    25px 15px;
+            }
+
+            .history-section {
+
+                overflow-x: auto;
+            }
+
+            .history-table {
+
+                min-width:
+                    700px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+            🚗 RoadGuard AI
+        </div>
+
+        <div class="nav-links">
+
+            <a href="#dashboard">
+                Dashboard
+            </a>
+
+            <a href="#detect">
+                Detect
+            </a>
+
+            <a href="#history">
+                History
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         MAIN CONTAINER
+    ========================================== -->
+
+    <div class="container">
+
+
+        <!-- =====================================
+             DASHBOARD
+        ====================================== -->
+
+        <h2
+            id="dashboard"
+            class="dashboard-title"
+        >
+            📊 Dashboard
+        </h2>
+
+
+        <div class="summary">
+
+
+            <!-- TOTAL SCANS -->
+
+            <div class="card">
+
+                <div class="number">
+
+                    {{ dashboard.total_scans }}
+
+                </div>
+
+                <div class="label">
+
+                    Total Scans
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL DAMAGE -->
+
+            <div class="card">
+
+                <div class="number">
+
+                    {{ dashboard.total_damage }}
+
+                </div>
+
+                <div class="label">
+
+                    Total Damage
+
+                </div>
+
+            </div>
+
+
+            <!-- POTHOLES -->
+
+            <div class="card">
+
+                <div class="number">
+
+                    {{ dashboard.total_potholes }}
+
+                </div>
+
+                <div class="label">
+
+                    Potholes
+
+                </div>
+
+            </div>
+
+
+            <!-- CONFIDENCE -->
+
+            <div class="card">
+
+                <div class="number">
+
+                    {{ dashboard.average_confidence }}%
+
+                </div>
+
+                <div class="label">
+
+                    Average Confidence
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =====================================
+             HERO
+        ====================================== -->
+
+        <div class="hero">
+
+            <h1>
+
+                🚗 AI-Based Road Damage Detection
+
+            </h1>
+
+            <p class="subtitle">
+
+                AI-powered detection of potholes,
+                cracks and other road damage
+
+            </p>
+
+        </div>
+
+
+        <!-- =====================================
+             IMAGE UPLOAD
+        ====================================== -->
+
+        <div
+            id="detect"
+            class="upload-box"
+        >
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <input
+                    class="file-input"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    required
+                >
+
+                <br>
+
+                <button type="submit">
+
+                    🔍 Detect Road Damage
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================
+             ERROR
+        ====================================== -->
+
+        {% if error %}
+
+            <p class="error">
+
+                {{ error }}
+
+            </p>
+
+        {% endif %}
+
+
+        <!-- =====================================
+             DETECTION RESULT
+        ====================================== -->
+
+        {% if result_image %}
+
+
+            <h2 class="section-title">
+
+                🔍 Detection Result
+
+            </h2>
+
+
+            <img
+                class="result-image"
+                src="{{ result_image }}"
+                alt="Road Damage Detection Result"
+            >
+
+
+            <!-- =================================
+                 DETECTION SUMMARY
+            ================================== -->
+
+            <h2 class="section-title">
+
+                📊 Detection Summary
+
+            </h2>
+
+
+            <div class="summary">
+
+
+                <div class="card">
+
+                    <div class="number">
+
+                        {{ summary.total }}
+
+                    </div>
+
+                    <div class="label">
+
+                        Total Damage
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="number">
+
+                        {{ summary.potholes }}
+
+                    </div>
+
+                    <div class="label">
+
+                        Potholes
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="number">
+
+                        {{ summary.cracks }}
+
+                    </div>
+
+                    <div class="label">
+
+                        Cracks
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="number">
+
+                        {{ summary.confidence }}%
+
+                    </div>
+
+                    <div class="label">
+
+                        Highest Confidence
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================
+                 SEVERITY
+            ================================== -->
+
+            <h2 class="section-title">
+
+                ⚠️ Estimated Severity
+
+            </h2>
+
+
+            <div class="severity">
+
+                {{ summary.severity }}
+
+            </div>
+
+
+            <!-- =================================
+                 DETECTED DAMAGE
+            ================================== -->
+
+            <h2 class="section-title">
+
+                🛣️ Detected Damage
+
+            </h2>
+
+
+            {% if detections %}
+
+
+                {% for detection in detections %}
+
+
+                    <div class="detection">
+
+
+                        <strong>
+
+                            {{ detection.class }}
+
+                        </strong>
+
+
+                        —
+
+                        {{ detection.confidence }}%
+                        confidence
+
+
+                        <br>
+
+
+                        <small>
+
+                            Estimated image area:
+
+                            {{ detection.area }}%
+
+                        </small>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            {% else %}
+
+
+                <p class="no-data">
+
+                    No road damage detected.
+
+                </p>
+
+
+            {% endif %}
+
+
+            <!-- =================================
+                 PDF REPORT BUTTON
+            ================================== -->
+
+            {% if upload_filename %}
+
+
+                <div class="report-area">
+
+
+                    <a
+                        class="report-button"
+                        href="{{ url_for(
+                            'generate_report',
+                            filename=upload_filename
+                        ) }}"
+                        target="_blank"
+                    >
+
+                        📄 Download PDF Report
+
+                    </a>
+
+
+                </div>
+
+
+            {% endif %}
+
+
+        {% endif %}
+
+
+    </div>
+
+
+    <!-- =========================================
+         DETECTION HISTORY
+    ========================================== -->
+
+    <section
+        id="history"
+        class="history-section"
+    >
+
+
+        <h2 class="section-title">
+
+            📋 Detection History
+
+        </h2>
+
+
+        {% if history %}
+
+
+            <table class="history-table">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date & Time
+                        </th>
+
+                        <th>
+                            Damage
+                        </th>
+
+                        <th>
+                            Count
+                        </th>
+
+                        <th>
+                            Confidence
+                        </th>
+
+                        <th>
+                            Severity
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for item in history %}
+
+
+                        <tr>
+
+
+                            <td>
+
+                                {{ item["date_time"] }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item["damage_type"] }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item["damage_count"] }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item["confidence"] }}%
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item["severity"] }}
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        {% else %}
+
+
+            <p class="no-data">
+
+                No detection history yet.
+
+            </p>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <div class="footer">
+
+        AI-Based Road Damage Detection System
+
+        <br>
+
+        Built with Python • Flask • YOLOv8 • SQLite
+
+    </div>
+
+
+</body>
+
+</html>

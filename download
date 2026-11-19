@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Dataset
+road-damage.v2i.yolov8/
+dataset/
+train/
+test/
+
+# YOLO training results
+runs/
+
+# Uploaded/generated images
+static/uploads/
+static/results/
+
+# Database
+road_damage.db
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# Environment/secrets
+.env
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS files
+Thumbs.db
+.DS_Store

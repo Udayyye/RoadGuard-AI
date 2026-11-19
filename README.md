@@ -1,4 +1,3 @@
-# RoadGuard-AI---Road-Damage-Detection
 # RoadGuard AI
 
 ## AI-Based Road Damage Detection System
